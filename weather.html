@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+<div id="control">
+	<input type="text" id="itext">
+	<button id="bsearch">Search</button>
+	<button id="bclear">Clear</button>
+</div>
+
+<div id="content">
+	
+</div>
+
+</body>
+<script type="text/javascript">
+	
+	itext 		= document.getElementById("itext");
+	bsearch		= document.getElementById("bsearch");
+	bclear		= document.getElementById("bclear");
+	divcontent	= document.getElementById("content");
+
+	bsearch.addEventListener("click",flickSearch);
+	bclear.addEventListener("click",flickClear);
+
+	function flickSearch() {
+		console.log(itext.value);
+		//newp = document.createElement("p");
+		//newp.innerHTML = itext.value;
+		//divcontent.appendChild(newp);
+
+		/*
+		https://api.flickr.com/services/rest/?
+		method=flickr.photos.search&
+		api_key=04affc099b81b7b911d4df63ca60272c&
+		text=cabo+verde&
+		extras=url_q&
+		per_page=5&
+		format=json&
+		nojsoncallback=1
+		*/
+		
+		base_url 		= "http://api.openweathermap.org/data/2.5/weather?";
+		appid 		= "APPID=fa454439b36b644d49e751a9b0afbcfc";
+		units			= "units=metric";
+		q 			= "q=" + itext.value;
+
+		call_url		= base_url +
+						  appid + "&" +
+						  units+ "&" +
+						  q;
+
+
+		console.log(call_url);
+
+		// criar XMLHttpRequest
+		request = new XMLHttpRequest();
+
+		// configurar XMLHttpRequest
+		request.open("GET",call_url);
+
+		// definir o que fazer com os dados
+		request.onreadystatechange = doSomethingWithData;
+
+		// fazer o request
+		request.send();
+
+
+		function doSomethingWithData() {
+			
+			console.log(request.readyState);
+			// apenas me interessa o readyState = 2 e status = 200
+			if (request.readyState == 4 && request.status == 200) {
+				console.log(request.responseText);
+				weatherJS = JSON.parse(request.responseText);
+				console.log(weatherJS);
+
+				ndiv = document.createElement("div");
+				nh1 = document.createElement("h1");
+				nh2 = document.createElement("h2");
+
+				nh1.innerHTML = weatherJS.name;
+				nh2.innerHTML = "temp: "+weatherJS.main.temp + " ºC";
+
+				ndiv.appendChild(nh1);
+				ndiv.appendChild(nh2);
+				divcontent.appendChild(ndiv);
+
+//				for (i=0; i < photosJS.photos.photo.length; i++) {
+//					newimg = document.createElement("img");
+//					newimg.setAttribute("src",photosJS.photos.photo[i].url_q);
+//					divcontent.appendChild(newimg);
+//				}
+			}
+
+		}
+
+
+	}
+
+	function flickClear() {
+		divcontent.innerHTML = "";
+	}
+
+</script>
+</html>
